@@ -23,6 +23,7 @@ COPY pcp.conf /config/
 # Copy scripts
 COPY entrypoint.sh /usr/local/bin/
 COPY monitor.sh /usr/local/bin/
+COPY failover.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
 
 # Expose ports

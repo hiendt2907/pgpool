@@ -30,6 +30,10 @@ echo "$PGPOOL_NODE_ID" > /etc/pgpool-II/pgpool_node_id
 chmod 644 /etc/pgpool-II/pgpool_node_id
 echo "[$(date)] Created pgpool_node_id file with ID: $PGPOOL_NODE_ID"
 
+# Create pcp.conf with correct password
+echo "admin:$(pg_md5 -m -u admin adminpass)" > /etc/pgpool-II/pcp.conf
+chmod 644 /etc/pgpool-II/pcp.conf
+
 # Update pgpool.conf with runtime values
 echo "[$(date)] Configuring pgpool.conf with runtime values..."
 
@@ -54,7 +58,7 @@ sed -i "s/^wd_lifecheck_password = .*/wd_lifecheck_password = '${REPMGR_PASSWORD
 echo "[$(date)] Discovering current primary in cluster..."
 
 find_primary() {
-  local nodes="pg-1 pg-2 pg-3 pg-4"
+  local nodes="pg-1 pg-2 pg-3"
   for node in $nodes; do
     # Check if PostgreSQL is running
     if ! PGPASSWORD=$REPMGR_PASSWORD psql -h $node -U repmgr -d postgres -c "SELECT 1" > /dev/null 2>&1; then
