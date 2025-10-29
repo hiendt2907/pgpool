@@ -37,9 +37,10 @@ chmod 644 /etc/pgpool-II/pcp.conf
 echo "[$(date)] Created pcp.conf with admin user"
 
 # Create .pcppass for monitor script
-echo "localhost:9898:admin:adminpass" > /var/lib/postgres/.pcppass
-chown postgres:postgres /var/lib/postgres/.pcppass
-chmod 600 /var/lib/postgres/.pcppass
+mkdir -p /var/lib/postgresql
+echo "localhost:9898:admin:adminpass" > /var/lib/postgresql/.pcppass
+chown postgres:postgres /var/lib/postgresql/.pcppass
+chmod 600 /var/lib/postgresql/.pcppass
 echo "[$(date)] Created .pcppass file"
 
 # Update pgpool.conf with runtime values
