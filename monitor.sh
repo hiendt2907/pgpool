@@ -12,12 +12,13 @@ while true; do
         exit 1
     fi
     
-    # Check backend status - only log if changed
-    CURRENT_BACKEND_STATUS=$(pcp_node_info -h localhost -p 9898 -U admin -w 2>/dev/null | grep -E "status|role" || echo "")
+    # Simple health check - try to connect to pgpool
+    if ! psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT 1" >/dev/null 2>&1; then
+        echo "[$(date -Iseconds)] [WARNING] ⚠️  Cannot connect to pgpool on port 5432"
+    fi
     
-    if [ "$CURRENT_BACKEND_STATUS" != "$PREV_BACKEND_STATUS" ]; then
-        echo "[$(date -Iseconds)] [INFO] ⚠️  Backend status changed:"
-        pcp_node_info -h localhost -p 9898 -U admin -w 2>/dev/null || echo "Unable to fetch backend info"
-        PREV_BACKEND_STATUS="$CURRENT_BACKEND_STATUS"
+    # Log that monitoring is working (reduced frequency)
+    if [ $(($(date +%s) % 300)) -eq 0 ]; then  # Every 5 minutes
+        echo "[$(date -Iseconds)] [INFO] ✓ PgPool monitoring active"
     fi
 done

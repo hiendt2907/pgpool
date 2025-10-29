@@ -31,8 +31,16 @@ chmod 644 /etc/pgpool-II/pgpool_node_id
 echo "[$(date)] Created pgpool_node_id file with ID: $PGPOOL_NODE_ID"
 
 # Create pcp.conf with correct password
-echo "admin:$(pg_md5 -m -u admin adminpass)" > /etc/pgpool-II/pcp.conf
+# Method 1: Use pre-computed hash for 'adminpass'
+echo "admin:e8a48653851e28c69d0506508fb27fc5" > /etc/pgpool-II/pcp.conf
 chmod 644 /etc/pgpool-II/pcp.conf
+echo "[$(date)] Created pcp.conf with admin user"
+
+# Create .pcppass for monitor script
+echo "localhost:9898:admin:adminpass" > /var/lib/postgres/.pcppass
+chown postgres:postgres /var/lib/postgres/.pcppass
+chmod 600 /var/lib/postgres/.pcppass
+echo "[$(date)] Created .pcppass file"
 
 # Update pgpool.conf with runtime values
 echo "[$(date)] Configuring pgpool.conf with runtime values..."
