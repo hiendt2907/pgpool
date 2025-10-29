@@ -43,8 +43,11 @@ sed -i "s/^other_pgpool_hostname0 = .*/other_pgpool_hostname0 = '${OTHER_PGPOOL_
 sed -i "s/^other_pgpool_port0 = .*/other_pgpool_port0 = ${OTHER_PGPOOL_PORT}/" /etc/pgpool-II/pgpool.conf
 
 # Update passwords in pgpool.conf
+sed -i "s/^sr_check_user = .*/sr_check_user = 'repmgr'/" /etc/pgpool-II/pgpool.conf
 sed -i "s/^sr_check_password = .*/sr_check_password = '${REPMGR_PASSWORD}'/" /etc/pgpool-II/pgpool.conf
+sed -i "s/^health_check_user = .*/health_check_user = 'repmgr'/" /etc/pgpool-II/pgpool.conf
 sed -i "s/^health_check_password = .*/health_check_password = '${REPMGR_PASSWORD}'/" /etc/pgpool-II/pgpool.conf
+sed -i "s/^wd_lifecheck_user = .*/wd_lifecheck_user = 'repmgr'/" /etc/pgpool-II/pgpool.conf
 sed -i "s/^wd_lifecheck_password = .*/wd_lifecheck_password = '${REPMGR_PASSWORD}'/" /etc/pgpool-II/pgpool.conf
 
 # Discover and wait for current primary (dynamic discovery)

@@ -7,7 +7,7 @@ while true; do
     sleep 60
     
     # Check pgpool process
-    if ! pgrep -x pgpool > /dev/null; then
+    if ! pgrep -x pgpool > /dev/null 2>&1; then
         echo "[$(date -Iseconds)] [CRITICAL] ⚠️  pgpool process not running!"
         exit 1
     fi

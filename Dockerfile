@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     jq \
     gosu \
+    procps \
     && rm -rf /var/lib/apt/lists/*
 
 # Create necessary directories
