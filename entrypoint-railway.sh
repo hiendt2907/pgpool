@@ -255,8 +255,7 @@ authentication_timeout = 60
 allow_clear_text_frontend_auth = on
 
 # Pool password encryption
-pool_passwd_encryption_method = aes256
-pool_passwd_encryption_key_file = '/etc/pgpool-II/.pgpoolkey'
+pool_passwd_encryption_method = none
 EOF
 
 # Set passwords and runtime placeholders in temp config (use escaped values)
@@ -340,26 +339,19 @@ if [ -z "$PRIMARY_NODE" ]; then
     echo "  Pgpool will start but may not route queries correctly until primary is available"
 fi
 
-# Create pool_passwd file with AES encryption
-echo "[$(date)] Creating pool_passwd with AES encryption for SCRAM-SHA-256..."
+# Create pool_passwd file with plain text passwords
+echo "[$(date)] Creating pool_passwd with plain text for SCRAM-SHA-256..."
 
-# Generate encryption key if not exists
-if [ ! -f /etc/pgpool-II/.pgpoolkey ]; then
-    # Use fixed key for consistency across pgpool instances
-    echo "12345678901234567890123456789012" > /etc/pgpool-II/.pgpoolkey
-    chmod 600 /etc/pgpool-II/.pgpoolkey
-fi
-
-# Create pool_passwd using pg_enc
+# Create pool_passwd
 > /etc/pgpool-II/pool_passwd
-pg_enc -k /etc/pgpool-II/.pgpoolkey -u postgres "$POSTGRES_PASSWORD" >> /etc/pgpool-II/pool_passwd
-pg_enc -k /etc/pgpool-II/.pgpoolkey -u repmgr "$REPMGR_PASSWORD" >> /etc/pgpool-II/pool_passwd
-pg_enc -k /etc/pgpool-II/.pgpoolkey -u app_readonly "$APP_READONLY_PASSWORD" >> /etc/pgpool-II/pool_passwd
-pg_enc -k /etc/pgpool-II/.pgpoolkey -u app_readwrite "$APP_READWRITE_PASSWORD" >> /etc/pgpool-II/pool_passwd
-pg_enc -k /etc/pgpool-II/.pgpoolkey -u pgpool "$REPMGR_PASSWORD" >> /etc/pgpool-II/pool_passwd
+echo "postgres:$POSTGRES_PASSWORD" >> /etc/pgpool-II/pool_passwd
+echo "repmgr:$REPMGR_PASSWORD" >> /etc/pgpool-II/pool_passwd
+echo "app_readonly:$APP_READONLY_PASSWORD" >> /etc/pgpool-II/pool_passwd
+echo "app_readwrite:$APP_READWRITE_PASSWORD" >> /etc/pgpool-II/pool_passwd
+echo "pgpool:$REPMGR_PASSWORD" >> /etc/pgpool-II/pool_passwd
 
 chmod 600 /etc/pgpool-II/pool_passwd
-echo "[$(date)] pool_passwd created with $(wc -l < /etc/pgpool-II/pool_passwd) users (AES encrypted)"
+echo "[$(date)] pool_passwd created with $(wc -l < /etc/pgpool-II/pool_passwd) users (plain text)"
 
 # Create pgpool user in PostgreSQL if primary is available
 if [ -n "$PRIMARY_NODE" ]; then
