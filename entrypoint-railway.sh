@@ -106,9 +106,9 @@ for i in "${!BACKENDS[@]}"; do
     # Remove any whitespace
     backend=$(echo "$backend" | tr -d ' ')
     
-    # Determine weight: 0 for first node (primary), 1 for others (standbys)
+    # Determine weight: 1 for first node (primary), 1 for others (standbys)
     if [ $i -eq 0 ]; then
-        weight=0  # Primary - no reads
+        weight=1  # Primary - handles reads and writes
     else
         weight=1  # Standby - load balance reads
     fi
@@ -407,7 +407,7 @@ for i in "${!BACKENDS[@]}"; do
     backend="${BACKENDS[$i]}"
     backend=$(echo "$backend" | tr -d ' ')
     if [ $i -eq 0 ]; then
-        echo "    backend$i: $backend (PRIMARY - writes only, weight=0)"
+        echo "    backend$i: $backend (PRIMARY - reads and writes, weight=1)"
     else
         echo "    backend$i: $backend (STANDBY - reads, weight=1)"
     fi
